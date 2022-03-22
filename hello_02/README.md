@@ -20,7 +20,8 @@ tcp-keepalive     300
 dbfilename        dump.rdb
 dir               ./
 rdbcompression    yes
-user              hzg on #b63d0bd4aab9cfaae37b9d940218c3d1425383fd51cab522e1c5cb3191d47bd4 ~* +@all
+user              myhat123 on #03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4 ~* +@all
+user              default off nopass ~* &* +@all
 
 $ ./src/redis-server redis.conf
 $ ./src/redis-cli
@@ -35,13 +36,16 @@ hzg@gofast:~/redis-6.2.6$ ./src/redis-cli
 
 参考 https://www.cnblogs.com/zhoujinyi/p/13222464.html
 
-$ echo -n "pydj1234" | shasum -a 256
-b63d0bd4aab9cfaae37b9d940218c3d1425383fd51cab522e1c5cb3191d47bd4  -
+$ echo -n "1234" | shasum -a 256
+03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4  -
 
 在创建用户之前，先说明下ACL的规则，首先看下一个完整的用户权限的格式：
 
-> ACL LIST  --显示用户信息
-1) "user default on #b63d0bd4aab9cfaae37b9d940218c3d1425383fd51cab522e1c5cb3191d47bd4 ~* +@all"
+hzg@gofast:~/redis-6.2.6$ ./src/redis-cli --user myhat123 --askpass
+Please input password: ****
+127.0.0.1:6379> acl list
+1) "user default off nopass sanitize-payload ~* &* +@all"
+2) "user myhat123 on #03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4 ~* &* +@all"
 
 格式说明：
 
@@ -54,19 +58,24 @@ on	       表示是否启用该用户，默认为off（禁用）
 ~*	       表示可以访问的Key（正则匹配）
 +@	       表示用户的权限，+/-表示授权还是销权； @为权限类。+@all 表示所有权限
 
-hzg@gofast:~/redis-6.2.6$ ./src/redis-cli shutdown
+关闭default默认用户后:
+
+hzg@gofast:~/redis-6.2.6$ ./src/redis-cli
+127.0.0.1:6379> acl list
 (error) NOAUTH Authentication required.
-
-hzg@gofast:~/redis-6.2.6$ ./src/redis-cli --user hzg --pass pydj1234
-Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
-127.0.0.1:6379> shutdown
-not connected> exit
-hzg@gofast:~/redis-6.2.6$ 
-
-hzg@gofast:~/redis-6.2.6$ ./src/redis-cli --user hzg --askpass
-Please input password: ********
-127.0.0.1:6379>
-
-hzg@gofast:~/redis-6.2.6$ ./src/redis-cli --user hzg
+127.0.0.1:6379> 
+hzg@gofast:~/redis-6.2.6$ ./src/redis-cli --user myhat123
+127.0.0.1:6379> acl list
+(error) NOAUTH Authentication required.
+127.0.0.1:6379> ping
+(error) NOAUTH Authentication required.
+127.0.0.1:6379> ping [message]
+hzg@gofast:~/redis-6.2.6$ ./src/redis-cli --user myhat123 --askpass
+Please input password: ****
 127.0.0.1:6379> ping
 PONG
+127.0.0.1:6379> acl list
+1) "user default off nopass sanitize-payload ~* &* +@all"
+2) "user myhat123 on #03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4 ~* &* +@all"
+127.0.0.1:6379> shutdown
+not connected>
