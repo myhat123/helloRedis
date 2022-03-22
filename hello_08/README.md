@@ -10,6 +10,7 @@ for key in r.scan_iter("prefix:*"):
 
 第一版本:
 
+```python
 from redis import StrictRedis
 cache = StrictRedis()
 
@@ -25,9 +26,11 @@ def clear_ns(ns):
         cache.delete(key)
         count += 1
     return count
+```
 
 第二版本:
 
+```python
 from redis import StrictRedis
 cache = StrictRedis()
 
@@ -45,9 +48,11 @@ def clear_cache_ns(ns):
         count += 1
     pipe.execute()
     return count
+```
 
 第三版本:
 
+```python
 from redis import StrictRedis
 cache = StrictRedis()
 CHUNK_SIZE = 5000
@@ -66,3 +71,4 @@ def clear_ns(ns):
             cache.delete(*keys)
 
     return True
+```
