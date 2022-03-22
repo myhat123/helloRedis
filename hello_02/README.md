@@ -79,3 +79,30 @@ PONG
 2) "user myhat123 on #03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4 ~* &* +@all"
 127.0.0.1:6379> shutdown
 not connected>
+
+127.0.0.1:6379> ACL GETUSER myhat123
+ 1) "flags"
+ 2) 1) "on"
+    2) "allkeys"
+    3) "allchannels"
+    4) "allcommands"
+ 3) "passwords"
+ 4) 1) "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+ 5) "commands"
+ 6) "+@all"
+ 7) "keys"
+ 8) 1) "*"
+ 9) "channels"
+10) 1) "*"
+127.0.0.1:6379> auth myhat123 1234
+OK
+
+权限文件
+=======
+
+aclfile /home/hzg/etc/users.acl
+
+users.acl内容
+
+user              myhat123 on #03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4 ~* +@all
+user              default off nopass ~* &* +@all
