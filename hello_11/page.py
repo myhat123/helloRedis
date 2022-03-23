@@ -21,3 +21,6 @@ def page(data, size=100):
 
 x = page(results)
 print(x)
+
+x = page(results, size=1000)
+print(x)
